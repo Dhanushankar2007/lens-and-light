@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lens & Light</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f8fafc;
+            color: #222;
+        }
+        nav {
+            width: 100%;
+            background: rgba(0,0,0,0.7);
+            position: fixed;
+            top: 0; left: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+        }
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 12px 0;
+            display: flex;
+            gap: 32px;
+        }
+        nav ul li {
+            display: inline;
+        }
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.1em;
+            letter-spacing: 1px;
+            transition: color 0.2s;
+        }
+        nav ul li a:hover {
+            color: #38bdf8;
+        }
+        section {
+            min-height: 100vh;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        /* Banner */
+        .banner {
+            width: 100vw;
+            height: 100vh;
+            background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1500&q=80') center center/cover no-repeat;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .banner-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.45);
+            z-index: 1;
+        }
+        .banner-content {
+            position: relative;
+            z-index: 2;
+            color: #fff;
+            text-align: center;
+        }
+        .banner-content h1 {
+            font-size: 3em;
+            margin-bottom: 18px;
+            letter-spacing: 2px;
+        }
+        .banner-content p {
+            font-size: 1.4em;
+            font-style: italic;
+            letter-spacing: 1px;
+        }
+        /* Gallery */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+            width: 90vw;
+            max-width: 1100px;
+            margin: 60px auto 30px auto;
+        }
+        .gallery-grid img {
+            width: 100%;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 12px #bae6fd;
+        }
+        .gallery-grid img:hover {
+            transform: scale(1.04);
+            box-shadow: 0 6px 24px #38bdf8aa;
+        }
+        /* Lightbox */
+        .lightbox {
+            display: none;
+            position: fixed;
+            z-index: 200;
+            left: 0; top: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.85);
+            align-items: center;
+            justify-content: center;
+        }
+        .lightbox.active {
+            display: flex;
+        }
+        .lightbox img {
+            max-width: 90vw;
+            max-height: 80vh;
+            border-radius: 14px;
+            box-shadow: 0 8px 32px #38bdf8;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: 30px; right: 40px;
+            font-size: 2.5em;
+            color: #fff;
+            cursor: pointer;
+            z-index: 201;
+            background: rgba(0,0,0,0.2);
+            border-radius: 50%;
+            padding: 0 16px;
+            transition: background 0.2s;
+        }
+        .lightbox-close:hover {
+            background: #bae6fd;
+            color: #0ea5e9;
+        }
+        /* Bio */
+        .bio-container {
+            background: #f0f9ff;
+            border-radius: 18px;
+            box-shadow: 0 2px 12px #bae6fd;
+            padding: 36px 24px;
+            max-width: 700px;
+            margin: 60px auto 30px auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 32px;
+            align-items: flex-start;
+        }
+        .bio-details {
+            flex: 2;
+        }
+        .bio-details h2 {
+            color: #0ea5e9;
+            margin-bottom: 12px;
+        }
+        .bio-details ul {
+            margin: 0 0 10px 0;
+            padding-left: 18px;
+        }
+        .bio-photo {
+            flex: 1;
+            min-width: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .bio-photo img {
+            width: 180px;
+            border-radius: 14px;
+            box-shadow: 0 2px 12px #bae6fd;
+        }
+        /* Services */
+        .services-container {
+            background: #f0f9ff;
+            border-radius: 18px;
+            box-shadow: 0 2px 12px #bae6fd;
+            padding: 36px 24px;
+            max-width: 700px;
+            margin: 60px auto 30px auto;
+        }
+        .services-container h2 {
+            color: #0ea5e9;
+            margin-bottom: 18px;
+        }
+        .services-list {
+            margin-bottom: 24px;
+        }
+        .services-list ul {
+            margin: 0 0 10px 0;
+            padding-left: 18px;
+        }
+        .pricing-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+        }
+        .pricing-table th, .pricing-table td {
+            border: 1px solid #bae6fd;
+            padding: 10px 14px;
+            text-align: left;
+        }
+        .pricing-table th {
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+        .pricing-table td {
+            background: #fff;
+        }
+        /* Contact */
+        .contact-container {
+            background: #f0f9ff;
+            border-radius: 18px;
+            box-shadow: 0 2px 12px #bae6fd;
+            padding: 36px 24px;
+            max-width: 700px;
+            margin: 60px auto 30px auto;
+        }
+        .contact-container h2 {
+            color: #0ea5e9;
+            margin-bottom: 18px;
+        }
+        .contact-details {
+            font-size: 1.1em;
+            line-height: 2;
+        }
+        .contact-details a {
+            color: #0ea5e9;
+            text-decoration: underline;
+        }
+        @media (max-width: 700px) {
+            .bio-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .bio-photo img {
+                width: 100%;
+                max-width: 220px;
+            }
+        }
+        @media (max-width: 500px) {
+            .gallery-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .bio-container, .services-container, .contact-container {
+                padding: 18px 4px;
+            }
+        }
+        /* Smooth scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="#banner">Home</a></li>
+            <li><a href="#gallery">Gallery</a></li>
+            <li><a href="#bio">Bio</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Page 1: Banner -->
+    <section class="banner" id="banner">
+        <div class="banner-overlay"></div>
+        <div class="banner-content">
+            <h1>Lens & Light</h1>
+            <p>Capturing moments, one click at a time</p>
+        </div>
+    </section>
+
+    <!-- Page 2: Gallery -->
+    <section id="gallery">
+        <h2 style="margin-top:80px; color:#0ea5e9;">Gallery</h2>
+        <div class="gallery-grid">
+            <img src="https://images.unsplash.com/photo-1465101178521-c1a9136a3b99?auto=format&fit=crop&w=600&q=80" alt="Nature 1">
+            <img src="https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=600&q=80" alt="Nature 2">
+            <img src="https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=600&q=80" alt="Nature 3">
+            <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80" alt="Nature 4">
+            <img src="https://images.unsplash.com/photo-1465101178521-c1a9136a3b99?auto=format&fit=crop&w=600&q=80" alt="Nature 5">
+            <img src="https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=600&q=80" alt="Nature 6">
+        </div>
+        <!-- Lightbox -->
+        <div class="lightbox" id="lightbox">
+            <span class="lightbox-close" id="lightboxClose">&times;</span>
+            <img id="lightboxImg" src="" alt="Large view">
+        </div>
+    </section>
+
+    <!-- Page 3: Bio -->
+    <section id="bio">
+        <div class="bio-container">
+            <div class="bio-details">
+                <h2>About the Photographer</h2>
+                <p><strong>Name:</strong> Dhanushree</p>
+                <p><strong>Photography Style:</strong> Wildlife Photography</p>
+                <p><strong>Gear List:</strong></p>
+                <ul>
+                    <li><strong>Camera Body:</strong> High-quality DSLR</li>
+                    <li><strong>Lenses:</strong> Wide-angle lens, Macro lens</li>
+                    <li><strong>Lens Filter:</strong> UV, Polarizing</li>
+                    <li><strong>Light Modifiers:</strong> Softboxes</li>
+                </ul>
+            </div>
+            <div class="bio-photo">
+                <img src="https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80" alt="Behind the Scenes">
+            </div>
+        </div>
+    </section>
+
+    <!-- Page 4: Services -->
+    <section id="services">
+        <div class="services-container">
+            <h2>Services & Packages</h2>
+            <div class="services-list">
+                <ul>
+                    <li>Portraits</li>
+                    <li>Nature Shoots</li>
+                </ul>
+            </div>
+            <table class="pricing-table">
+                <tr>
+                    <th>Package</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                </tr>
+                <tr>
+                    <td>Portrait Basic</td>
+                    <td>1-hour session, 10 edited photos</td>
+                    <td>₹2,000</td>
+                </tr>
+                <tr>
+                    <td>Nature Explorer</td>
+                    <td>2-hour outdoor shoot, 20 edited photos</td>
+                    <td>₹3,500</td>
+                </tr>
+                <tr>
+                    <td>Wildlife Pro</td>
+                    <td>Half-day wildlife shoot, 40 edited photos</td>
+                    <td>₹7,000</td>
+                </tr>
+            </table>
+        </div>
+    </section>
+
+    <!-- Page 5: Contact -->
+    <section id="contact">
+        <div class="contact-container">
+            <h2>Contact Details</h2>
+            <div class="contact-details">
+                <strong>Name:</strong> Dhanushree<br>
+                <strong>Email:</strong> <a href="mailto:d30057640@gmail.com">d30057640@gmail.com</a><br>
+                <strong>Location:</strong> Lens and Light Studio, BH Road, Tumkur<br>
+                <strong>Instagram:</strong> <a href="https://instagram.com/lens_and_light" target="_blank">@lens_and_light</a>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Lightbox functionality
+        const galleryImages = document.querySelectorAll('.gallery-grid img');
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightboxImg');
+        const lightboxClose = document.getElementById('lightboxClose');
+
+        galleryImages.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src.replace('w=600', 'w=1200');
+                lightbox.classList.add('active');
+            });
+        });
+
+        lightboxClose.addEventListener('click', () => {
+            lightbox.classList.remove('active');
+            lightboxImg.src = '';
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                lightbox.classList.remove('active');
+                lightboxImg.src = '';
+            }
